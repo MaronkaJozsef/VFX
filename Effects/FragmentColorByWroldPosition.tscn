@@ -1,0 +1,99 @@
+[gd_scene load_steps=11 format=3 uid="uid://c0p55wgmjconw"]
+
+[sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_sopp6"]
+parameter_name = "BaseColor"
+default_value_enabled = true
+
+[sub_resource type="VisualShaderNodeFloatConstant" id="VisualShaderNodeFloatConstant_dmcdc"]
+constant = 0.5
+
+[sub_resource type="VisualShaderNodeVaryingGetter" id="VisualShaderNodeVaryingGetter_bqm4b"]
+varying_name = "WorldPos"
+varying_type = 5
+
+[sub_resource type="VisualShaderNodeVaryingSetter" id="VisualShaderNodeVaryingSetter_bsgv7"]
+varying_name = "WorldPos"
+varying_type = 5
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_t7s8e"]
+input_name = "vertex"
+
+[sub_resource type="VisualShaderNodeTransformVecMult" id="VisualShaderNodeTransformVecMult_bhxsg"]
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_arfg3"]
+input_name = "model_matrix"
+
+[sub_resource type="VisualShader" id="VisualShader_o8e8k"]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+
+// Varyings
+varying vec4 WorldPos;
+
+
+
+
+void vertex() {
+// Input:5
+	mat4 n_out5p0 = MODEL_MATRIX;
+
+
+// Input:3
+	vec3 n_out3p0 = VERTEX;
+
+
+// TransformVectorMult:4
+	vec3 n_out4p0 = (n_out5p0 * vec4(n_out3p0, 1.0)).xyz;
+
+
+// VaryingSetter:2
+	WorldPos = vec4(n_out4p0, 0.0);
+
+
+}
+
+void fragment() {
+// VaryingGetter:4
+	vec4 n_out4p0 = WorldPos;
+
+
+// FloatConstant:3
+	float n_out3p0 = 0.500000;
+
+
+// Output:0
+	ALBEDO = vec3(n_out4p0.xyz);
+	ALPHA_SCISSOR_THRESHOLD = n_out3p0;
+
+
+}
+"
+graph_offset = Vector2(-389.961, -4.47673)
+varyings/WorldPos = "0,5"
+nodes/vertex/2/node = SubResource("VisualShaderNodeVaryingSetter_bsgv7")
+nodes/vertex/2/position = Vector2(400, 420)
+nodes/vertex/3/node = SubResource("VisualShaderNodeInput_t7s8e")
+nodes/vertex/3/position = Vector2(-300, 480)
+nodes/vertex/4/node = SubResource("VisualShaderNodeTransformVecMult_bhxsg")
+nodes/vertex/4/position = Vector2(20, 400)
+nodes/vertex/5/node = SubResource("VisualShaderNodeInput_arfg3")
+nodes/vertex/5/position = Vector2(-260, 400)
+nodes/vertex/connections = PackedInt32Array(3, 0, 4, 1, 5, 0, 4, 0, 4, 0, 2, 0)
+nodes/fragment/2/node = SubResource("VisualShaderNodeColorParameter_sopp6")
+nodes/fragment/2/position = Vector2(-40, 80)
+nodes/fragment/3/node = SubResource("VisualShaderNodeFloatConstant_dmcdc")
+nodes/fragment/3/position = Vector2(-40, 280)
+nodes/fragment/4/node = SubResource("VisualShaderNodeVaryingGetter_bqm4b")
+nodes/fragment/4/position = Vector2(-140, 440)
+nodes/fragment/connections = PackedInt32Array(3, 0, 0, 19, 4, 0, 0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mb5xc"]
+render_priority = 0
+shader = SubResource("VisualShader_o8e8k")
+
+[sub_resource type="SphereMesh" id="SphereMesh_cdj1p"]
+
+[node name="Node3D" type="MeshInstance3D"]
+material_override = SubResource("ShaderMaterial_mb5xc")
+mesh = SubResource("SphereMesh_cdj1p")
