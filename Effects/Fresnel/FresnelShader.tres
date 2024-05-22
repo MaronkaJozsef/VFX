@@ -1,0 +1,31 @@
+[gd_resource type="Shader" format=3 uid="uid://dnoff6wo1tcbm"]
+
+[resource]
+code = "shader_type spatial;
+
+uniform vec3 color: source_color;
+uniform float fresnelPower: hint_range(0.0, 32.0, 0.1) = 2.0f;
+
+varying vec3 world_normal;
+varying vec3 world_position;
+
+void vertex() {
+	// Called for every vertex the material is visible on.
+	world_normal = (MODEL_MATRIX * vec4(NORMAL, 0.0f)).xyz;
+	world_position = (MODEL_MATRIX * vec4(VERTEX, 1.0f)).xyz;
+}
+
+void fragment() {
+	// Normalize world_normal to avoid interpolation artifacts
+	vec3 normal = normalize(world_normal);
+	vec3 viewDirection = normalize(CAMERA_POSITION_WORLD - world_position);
+	float fresnel = pow(1.0f - clamp(dot(normal, viewDirection), 0.0f, 1.0f), fresnelPower);
+	
+	ALBEDO = color + fresnel;
+}
+
+//void light() {
+	// Called for every pixel for every light affecting the material.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"

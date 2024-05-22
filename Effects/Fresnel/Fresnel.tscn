@@ -1,0 +1,30 @@
+[gd_scene load_steps=7 format=3 uid="uid://crhrxaulj45ax"]
+
+[ext_resource type="PackedScene" uid="uid://cv5qr8jfjdvca" path="res://Prefabs/Sphere.tscn" id="1_34bn8"]
+[ext_resource type="Material" uid="uid://dvoonkal63mtw" path="res://Effects/Fresnel/FresnelMaterial.tres" id="2_25cqm"]
+[ext_resource type="PackedScene" uid="uid://c4bkxum6bmfxi" path="res://Prefabs/RotatingCamera.tscn" id="3_dw6ak"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_rj14s"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_xvgmp"]
+sky_material = SubResource("ProceduralSkyMaterial_rj14s")
+
+[sub_resource type="Environment" id="Environment_nf2j1"]
+background_mode = 2
+sky = SubResource("Sky_xvgmp")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="Sphere" instance=ExtResource("1_34bn8")]
+material_override = ExtResource("2_25cqm")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="0"]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="1"]
+environment = SubResource("Environment_nf2j1")
+
+[node name="RotatingCamara" parent="." index="2" instance=ExtResource("3_dw6ak")]

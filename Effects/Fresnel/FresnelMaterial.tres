@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dvoonkal63mtw"]
+
+[ext_resource type="Shader" uid="uid://dum4e6uo3dn02" path="res://Effects/Fresnel/FresnelVisualShader.tres" id="1_8tdef"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_8tdef")
+shader_parameter/Color = Color(0.690196, 0.121569, 0.690196, 1)
+shader_parameter/FresnelPower = 4.0
