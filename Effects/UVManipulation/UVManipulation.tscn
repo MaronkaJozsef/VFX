@@ -1,0 +1,88 @@
+[gd_scene load_steps=16 format=3 uid="uid://bc2g30e8gttcn"]
+
+[ext_resource type="Shader" path="res://Effects/UVManipulation/TextureShaders/Tile.gdshader" id="1_g1x8e"]
+[ext_resource type="Texture2D" uid="uid://dcgvpx64iw7c" path="res://Effects/UVManipulation/UVGridHelper.png" id="1_w7hmc"]
+[ext_resource type="Shader" path="res://Effects/UVManipulation/TextureShaders/Scroll.gdshader" id="2_01mhd"]
+[ext_resource type="Shader" path="res://Effects/UVManipulation/TextureShaders/Offset.gdshader" id="3_ce34l"]
+[ext_resource type="Shader" path="res://Effects/UVManipulation/TextureShaders/Scale.gdshader" id="5_ctj41"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_6r3yi"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_leu4g"]
+sky_material = SubResource("ProceduralSkyMaterial_6r3yi")
+
+[sub_resource type="Environment" id="Environment_d0j8c"]
+background_mode = 2
+sky = SubResource("Sky_leu4g")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6mors"]
+render_priority = 0
+shader = ExtResource("1_g1x8e")
+shader_parameter/tileX = 4.0
+shader_parameter/tileY = 4.0
+shader_parameter/albedo = ExtResource("1_w7hmc")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_kksnc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ogxi7"]
+render_priority = 0
+shader = ExtResource("2_01mhd")
+shader_parameter/speedX = 0.0
+shader_parameter/speedY = 1.0
+shader_parameter/albedo = ExtResource("1_w7hmc")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1kveo"]
+render_priority = 0
+shader = ExtResource("3_ce34l")
+shader_parameter/offsetX = 0.5
+shader_parameter/offsetY = 0.5
+shader_parameter/albedo = ExtResource("1_w7hmc")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_6cijd"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_455o0"]
+render_priority = 0
+shader = ExtResource("5_ctj41")
+shader_parameter/scaleX = 4.0
+shader_parameter/scaleY = 4.0
+shader_parameter/albedo = ExtResource("1_w7hmc")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_niyj3"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, -0.236661, 0.795433, 0.557923, -0.440448, 0.424009, -0.791342, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_d0j8c")
+
+[node name="Tile" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, -1.2)
+material_override = SubResource("ShaderMaterial_6mors")
+mesh = SubResource("PlaneMesh_kksnc")
+
+[node name="Scroll" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, -1.2)
+material_override = SubResource("ShaderMaterial_ogxi7")
+mesh = SubResource("PlaneMesh_kksnc")
+
+[node name="Offset" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 1.2)
+material_override = SubResource("ShaderMaterial_1kveo")
+mesh = SubResource("PlaneMesh_6cijd")
+skeleton = NodePath("../Tile")
+
+[node name="Scale" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 1.2)
+material_override = SubResource("ShaderMaterial_455o0")
+mesh = SubResource("PlaneMesh_niyj3")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 3.78121, 0)
+fov = 62.1
