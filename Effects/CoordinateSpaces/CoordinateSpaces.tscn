@@ -1,0 +1,89 @@
+[gd_scene load_steps=13 format=3 uid="uid://bfq3il4y1m5cv"]
+
+[ext_resource type="Shader" path="res://Effects/CoordinateSpaces/TextShaders/MatCap.gdshader" id="1_1dkui"]
+[ext_resource type="Texture2D" uid="uid://bkpg5bvppm7ej" path="res://Effects/CoordinateSpaces/Textures/Matcap.png" id="2_pqqxi"]
+[ext_resource type="ArrayMesh" uid="uid://dp7vcxr2ke3t2" path="res://Effects/CoordinateSpaces/CatMesh.tres" id="3_o0yo5"]
+[ext_resource type="Texture2D" uid="uid://c1nl0en3jema4" path="res://Effects/CoordinateSpaces/Textures/rock_01_diff_1k.jpg" id="4_5r8py"]
+[ext_resource type="Texture2D" uid="uid://bc6inh10dxs4i" path="res://Effects/CoordinateSpaces/Textures/catNormalMap.png" id="4_bl3qg"]
+[ext_resource type="Texture2D" uid="uid://ca0co1baffycf" path="res://Effects/CoordinateSpaces/Textures/aerial_grass_rock_diff_1k.jpg" id="6_v4d6p"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4vih5"]
+render_priority = 0
+shader = ExtResource("1_1dkui")
+shader_parameter/colorTexture = ExtResource("2_pqqxi")
+
+[sub_resource type="GDScript" id="GDScript_asbe6"]
+script/source = "extends MeshInstance3D
+
+func _process(delta: float) -> void:
+	rotate(Vector3.UP, delta);
+"
+
+[sub_resource type="Shader" id="Shader_nop0i"]
+code = "shader_type spatial;
+
+uniform sampler2D baseTexture;
+uniform sampler2D overlayTexture;
+uniform sampler2D normalMap: hint_normal;
+
+varying vec3 world_normal;
+varying vec3 world_tangent;
+varying vec3 world_binormal;
+
+void vertex() {
+	world_normal = normalize(MODEL_MATRIX * vec4(NORMAL, 1.0f)).rgb;
+	world_tangent = normalize(MODEL_MATRIX * vec4(TANGENT, 1.0f)).rgb;
+	world_binormal = normalize(MODEL_MATRIX * vec4(BINORMAL, 1.0f)).rgb;
+}
+
+void fragment() {
+	//ALBEDO = mix(baseColor, ovelayColor, world_normal.y).rgb;
+	vec4 normal_tangent = texture(normalMap, UV);
+	normal_tangent = normal_tangent * 2.0 - 1.0;
+	
+	mat3 tbn = mat3(
+        world_tangent, 
+        world_binormal, 
+        world_normal
+    );
+	
+	vec3 normal_world = normalize(tbn * normal_tangent.rgb);
+	vec4 baseColor = texture(baseTexture, UV);
+	vec4 overlayColor = texture(overlayTexture, UV);
+	
+	vec4 color = mix(baseColor, overlayColor, normal_world.y);
+	ALBEDO = color.rgb;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i3454"]
+render_priority = 0
+shader = SubResource("Shader_nop0i")
+shader_parameter/baseTexture = ExtResource("4_5r8py")
+shader_parameter/overlayTexture = ExtResource("6_v4d6p")
+shader_parameter/normalMap = ExtResource("4_bl3qg")
+
+[sub_resource type="SphereMesh" id="SphereMesh_no0du"]
+
+[sub_resource type="GDScript" id="GDScript_4ctns"]
+script/source = "extends MeshInstance3D
+
+func _process(delta: float) -> void:
+	rotate(Vector3.FORWARD, delta)
+"
+
+[node name="MatCap" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.446941, 1.49929)
+
+[node name="MatCapCat" type="MeshInstance3D" parent="."]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -0.58351, 0, 0)
+material_override = SubResource("ShaderMaterial_4vih5")
+mesh = ExtResource("3_o0yo5")
+script = SubResource("GDScript_asbe6")
+
+[node name="MossyRock" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.568404, 0.354327, 0)
+material_override = SubResource("ShaderMaterial_i3454")
+mesh = SubResource("SphereMesh_no0du")
+script = SubResource("GDScript_4ctns")
