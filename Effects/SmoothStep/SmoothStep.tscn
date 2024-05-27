@@ -1,0 +1,33 @@
+[gd_scene load_steps=7 format=3 uid="uid://bqhyynpj1i4fb"]
+
+[ext_resource type="Shader" path="res://Effects/SmoothStep/SmoothStep.gdshader" id="1_8b84o"]
+
+[sub_resource type="Gradient" id="Gradient_wnxw4"]
+offsets = PackedFloat32Array(0, 0.344262, 0.754098, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.166537, 0.406552, 0.136431, 1, 0.957361, 0.643441, 0.73779, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_3kqup"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_3cxtk"]
+color_ramp = SubResource("Gradient_wnxw4")
+noise = SubResource("FastNoiseLite_3kqup")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dwh5a"]
+render_priority = 0
+shader = ExtResource("1_8b84o")
+shader_parameter/noise = SubResource("NoiseTexture2D_3cxtk")
+
+[sub_resource type="QuadMesh" id="QuadMesh_raq1f"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.870811, -0.425754, 0.245809, 2.78059e-08, 0.5, 0.866026, -0.491618, -0.754144, 0.435405, 0, 0, 0)
+shadow_enabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_dwh5a")
+mesh = SubResource("QuadMesh_raq1f")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.917739)

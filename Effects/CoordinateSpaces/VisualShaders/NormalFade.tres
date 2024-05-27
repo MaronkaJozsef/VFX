@@ -211,7 +211,6 @@ void fragment() {
 
 }
 "
-graph_offset = Vector2(-632.966, -133.258)
 varyings/world_normal = "0,4"
 varyings/world_tangent = "0,4"
 varyings/world_binormal = "0,4"
