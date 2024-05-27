@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://cjm3j1u3pyfgc"]
+
+[ext_resource type="Shader" path="res://Effects/Distance/Distance.gdshader" id="1_ciflm"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bshq6"]
+render_priority = 0
+shader = ExtResource("1_ciflm")
+
+[sub_resource type="QuadMesh" id="QuadMesh_r61ss"]
+
+[node name="Distance" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.839825)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_bshq6")
+mesh = SubResource("QuadMesh_r61ss")
