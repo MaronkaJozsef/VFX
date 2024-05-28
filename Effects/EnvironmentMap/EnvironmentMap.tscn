@@ -1,0 +1,51 @@
+[gd_scene load_steps=9 format=3 uid="uid://db868gbb0rgtx"]
+
+[ext_resource type="Texture2D" uid="uid://c7v5k1rw814b7" path="res://Effects/EnvironmentMap/symmetrical_garden_02_1k.hdr" id="1_1qs5v"]
+[ext_resource type="PackedScene" uid="uid://n2h6i763ps46" path="res://Prefabs/Rotator.tscn" id="1_8785f"]
+[ext_resource type="Shader" path="res://Effects/EnvironmentMap/EnvironmentMap.gdshader" id="3_ttarv"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_axwny"]
+panorama = ExtResource("1_1qs5v")
+
+[sub_resource type="Sky" id="Sky_shpix"]
+sky_material = SubResource("PanoramaSkyMaterial_axwny")
+
+[sub_resource type="Environment" id="Environment_sweus"]
+background_mode = 2
+sky = SubResource("Sky_shpix")
+sky_rotation = Vector3(0, -1.5708, 0)
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hd6vf"]
+render_priority = 0
+shader = ExtResource("3_ttarv")
+shader_parameter/environment = ExtResource("1_1qs5v")
+
+[sub_resource type="SphereMesh" id="SphereMesh_ewe0n"]
+
+[node name="EnvironmentMap" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sweus")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.62748)
+
+[node name="Rotator2" parent="." instance=ExtResource("1_8785f")]
+speed = -0.5
+axis = Vector3(1, 0, 0)
+
+[node name="Rotator" parent="Rotator2" instance=ExtResource("1_8785f")]
+speed = 0.3
+axis = Vector3(1, 1, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Rotator2/Rotator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_hd6vf")
+mesh = SubResource("SphereMesh_ewe0n")
+skeleton = NodePath("../../..")
