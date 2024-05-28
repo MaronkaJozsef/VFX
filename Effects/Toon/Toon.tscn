@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://cbtv3f56veyfr"]
+
+[ext_resource type="PackedScene" uid="uid://n2h6i763ps46" path="res://Prefabs/Rotator.tscn" id="1_0pok2"]
+[ext_resource type="ArrayMesh" uid="uid://dp7vcxr2ke3t2" path="res://Effects/CoordinateSpaces/CatMesh.tres" id="2_5rwm0"]
+[ext_resource type="Shader" path="res://Effects/Toon/Toon.gdshader" id="2_fhvht"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_riedg"]
+render_priority = 0
+shader = ExtResource("2_fhvht")
+
+[node name="Toon" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.845779, 0.44862, -0.288789, 0.261617, 0.820456, 0.508339, 0.464989, 0.35439, -0.811291, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 1.1498, 0.339377, 0)
+
+[node name="Rotator" parent="." instance=ExtResource("1_0pok2")]
+
+[node name="Cat" type="MeshInstance3D" parent="Rotator"]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_riedg")
+mesh = ExtResource("2_5rwm0")
+skeleton = NodePath("../..")
