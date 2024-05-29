@@ -169,7 +169,7 @@ void fragment() {
 
 
 // FloatConstant:14
-	float n_out14p0 = 3.141593;
+	float n_out14p0 = 3.141590;
 
 
 // FloatOp:13
@@ -189,7 +189,7 @@ void fragment() {
 
 
 // FloatConstant:18
-	float n_out18p0 = 1.570796;
+	float n_out18p0 = 1.570800;
 
 
 // FloatOp:17
@@ -197,7 +197,7 @@ void fragment() {
 
 
 // FloatConstant:20
-	float n_out20p0 = 3.141593;
+	float n_out20p0 = 3.141590;
 
 
 // FloatOp:19
@@ -219,7 +219,6 @@ void fragment() {
 
 }
 "
-graph_offset = Vector2(-752.584, -70.8378)
 varyings/world_normal = "0,4"
 varyings/world_position = "0,4"
 nodes/vertex/2/node = SubResource("VisualShaderNodeVaryingSetter_hb33y")

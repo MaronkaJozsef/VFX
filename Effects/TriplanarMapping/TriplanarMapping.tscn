@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3 uid="uid://280gtw7xo6xs"]
+
+[ext_resource type="PackedScene" uid="uid://n2h6i763ps46" path="res://Prefabs/Rotator.tscn" id="1_td46s"]
+[ext_resource type="Shader" path="res://Effects/TriplanarMapping/TriplanarMapping.gdshader" id="1_y62y4"]
+[ext_resource type="Texture2D" uid="uid://c1nl0en3jema4" path="res://Effects/CoordinateSpaces/Textures/rock_01_diff_1k.jpg" id="2_ndu8n"]
+[ext_resource type="ArrayMesh" uid="uid://dp7vcxr2ke3t2" path="res://Effects/CoordinateSpaces/CatMesh.tres" id="4_w8hj2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nf0o6"]
+render_priority = 0
+shader = ExtResource("1_y62y4")
+shader_parameter/colorTexture = ExtResource("2_ndu8n")
+
+[node name="Triplanar" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.0598832, -0.729607, 0.68124, 0.334301, 0.628396, 0.702397, -0.940562, 0.269801, 0.206278, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Rotator" parent="." instance=ExtResource("1_td46s")]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Rotator"]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_nf0o6")
+mesh = ExtResource("4_w8hj2")
+skeleton = NodePath("../..")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.411327, 0.897206)
