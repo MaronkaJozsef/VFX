@@ -12,8 +12,14 @@ void vertex() {
 
 void fragment() {
 	vec3 absNormal = abs(normalize(worldNormal));
-	vec3 mask = pow(absNormal, vec3(1.0f));
-	vec3 final = mask / dot(mask, vec3(1.0f));
+	vec3 mask = pow(absNormal, vec3(16.0f));
+	vec3 weight = mask / dot(mask, vec3(1.0f));
 	
-	ALBEDO = texture(colorTexture, worldPosition.xy).rgb * final.b + texture(colorTexture, worldPosition.xz).rgb * final.g + texture(colorTexture, worldPosition.yz).rgb * final.r;
+	vec4 textureX = texture(colorTexture, worldPosition.yz) * weight.x;
+	vec4 textureY = texture(colorTexture, worldPosition.xz) * weight.y;
+	vec4 textureZ = texture(colorTexture, worldPosition.xy) * weight.z;
+	
+	vec4 color = textureX + textureY + textureZ;
+	
+	ALBEDO = color.rgb;
 }
