@@ -1,0 +1,67 @@
+[gd_scene load_steps=5 format=3 uid="uid://cp8cdb85vg1gf"]
+
+[ext_resource type="Material" uid="uid://vnur0y3ika6l" path="res://Effects/InteriorMapping/InteriorMapping.material" id="1_l0p3a"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_itqxj"]
+
+[sub_resource type="GDScript" id="GDScript_fnsyv"]
+script/source = "extends CharacterBody3D
+
+const SPEED = 5.0
+const JUMP_VELOCITY = 4.5
+
+@export var targetMaterial : ShaderMaterial
+@export var rotationMax := deg_to_rad(90)
+@export var rotationMin := deg_to_rad(-90)
+
+var _mouseInput := Vector2.ZERO
+var _rotation := Vector3.ZERO
+
+func _unhandled_input(event: InputEvent) -> void:
+	if (event is InputEventMouseMotion):
+		_mouseInput = event.relative
+
+func _physics_process(delta: float) -> void:
+	if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+
+	var verticalInput := Input.get_axis(\"down\", \"up\")
+	var horizontalInput := Input.get_vector(\"left\", \"right\", \"forward\", \"backward\");
+	var direction := (transform.basis * Vector3(horizontalInput.x, verticalInput, horizontalInput.y)).normalized()
+	velocity = direction * SPEED
+
+	_rotation.x += -_mouseInput.y * delta
+	_rotation.x = clamp(_rotation.x, rotationMin, rotationMax)
+	_rotation.y += -_mouseInput.x * delta
+	
+	transform.basis = Basis.from_euler(_rotation)
+	rotation.z = 0
+	_mouseInput = Vector2.ZERO
+
+	move_and_slide()
+	#print(transform.basis.z)
+	targetMaterial.set_shader_parameter(\"cameraDirection\", -transform.basis.z)
+"
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_yhgwj"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = ExtResource("1_l0p3a")
+mesh = SubResource("QuadMesh_itqxj")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.07156)
+visible = false
+script = SubResource("GDScript_fnsyv")
+targetMaterial = ExtResource("1_l0p3a")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("SphereShape3D_yhgwj")
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
