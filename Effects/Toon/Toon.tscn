@@ -1,17 +1,24 @@
-[gd_scene load_steps=5 format=3 uid="uid://cbtv3f56veyfr"]
+[gd_scene load_steps=7 format=3 uid="uid://cbtv3f56veyfr"]
 
 [ext_resource type="PackedScene" uid="uid://n2h6i763ps46" path="res://Prefabs/Rotator.tscn" id="1_0pok2"]
 [ext_resource type="ArrayMesh" uid="uid://dp7vcxr2ke3t2" path="res://Effects/CoordinateSpaces/CatMesh.tres" id="2_5rwm0"]
 [ext_resource type="Shader" path="res://Effects/Toon/Toon.gdshader" id="2_fhvht"]
+[ext_resource type="Shader" path="res://Effects/Toon/ToonOutline.gdshader" id="3_tlq8d"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bi30l"]
+render_priority = 0
+shader = ExtResource("2_fhvht")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_riedg"]
 render_priority = 0
-shader = ExtResource("2_fhvht")
+next_pass = SubResource("ShaderMaterial_bi30l")
+shader = ExtResource("3_tlq8d")
+shader_parameter/offset = 0.002
 
 [node name="Toon" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.845779, 0.44862, -0.288789, 0.261617, 0.820456, 0.508339, 0.464989, 0.35439, -0.811291, 0, 0, 0)
+transform = Transform3D(-0.565883, 0.557049, -0.607843, 0.261617, 0.820456, 0.508338, 0.781878, 0.128638, -0.610016, 0, 0, 0)
 shadow_enabled = true
 
 [node name="Camera3D" type="Camera3D" parent="."]

@@ -1,0 +1,87 @@
+[gd_resource type="VisualShader" load_steps=7 format=3 uid="uid://cgx5v1b5y0wbn"]
+
+[sub_resource type="VisualShaderNodeColorConstant" id="VisualShaderNodeColorConstant_pdr11"]
+constant = Color(0, 0, 0, 1)
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_7epse"]
+input_name = "normal"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_58axq"]
+operator = 2
+
+[sub_resource type="VisualShaderNodeFloatParameter" id="VisualShaderNodeFloatParameter_rjqdw"]
+parameter_name = "FloatParameter"
+hint = 2
+step = 0.001
+default_value_enabled = true
+default_value = 0.002
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_5lmdv"]
+input_name = "vertex"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_4vgnj"]
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_front, diffuse_lambert, specular_disabled, unshaded;
+
+uniform float FloatParameter : hint_range(0, 1, 0.0010000000475) = 0.00200000009499;
+
+
+
+void vertex() {
+// Input:5
+	vec3 n_out5p0 = VERTEX;
+
+
+// Input:2
+	vec3 n_out2p0 = NORMAL;
+
+
+// FloatParameter:4
+	float n_out4p0 = FloatParameter;
+
+
+// VectorOp:3
+	vec3 n_out3p0 = n_out2p0 * vec3(n_out4p0);
+
+
+// VectorOp:6
+	vec3 n_out6p0 = n_out5p0 + n_out3p0;
+
+
+// Output:0
+	VERTEX = n_out6p0;
+
+
+}
+
+void fragment() {
+// ColorConstant:2
+	vec4 n_out2p0 = vec4(0.000000, 0.000000, 0.000000, 1.000000);
+
+
+// Output:0
+	ALBEDO = vec3(n_out2p0.xyz);
+
+
+}
+"
+graph_offset = Vector2(-337.003, 17.1229)
+modes/cull = 1
+modes/specular = 2
+flags/unshaded = true
+nodes/vertex/2/node = SubResource("VisualShaderNodeInput_7epse")
+nodes/vertex/2/position = Vector2(-620, 220)
+nodes/vertex/3/node = SubResource("VisualShaderNodeVectorOp_58axq")
+nodes/vertex/3/position = Vector2(-180, 260)
+nodes/vertex/4/node = SubResource("VisualShaderNodeFloatParameter_rjqdw")
+nodes/vertex/4/position = Vector2(-560, 320)
+nodes/vertex/5/node = SubResource("VisualShaderNodeInput_5lmdv")
+nodes/vertex/5/position = Vector2(-620, 120)
+nodes/vertex/6/node = SubResource("VisualShaderNodeVectorOp_4vgnj")
+nodes/vertex/6/position = Vector2(40, 120)
+nodes/vertex/connections = PackedInt32Array(2, 0, 3, 0, 4, 0, 3, 1, 5, 0, 6, 0, 3, 0, 6, 1, 6, 0, 0, 0)
+nodes/fragment/2/node = SubResource("VisualShaderNodeColorConstant_pdr11")
+nodes/fragment/2/position = Vector2(200, 200)
+nodes/fragment/connections = PackedInt32Array(2, 0, 0, 0)
