@@ -1,0 +1,112 @@
+[gd_resource type="VisualShader" load_steps=10 format=3 uid="uid://dr3o3l65sfrj3"]
+
+[ext_resource type="Texture2D" uid="uid://dcgvpx64iw7c" path="res://Effects/UVManipulation/UVGridHelper.png" id="1_dwskq"]
+
+[sub_resource type="VisualShaderNodeRotationByAxis" id="VisualShaderNodeRotationByAxis_u1w3p"]
+default_input_values = [1, 0.3, 2, Vector3(0, 0, 1)]
+
+[sub_resource type="VisualShaderNodeVectorCompose" id="VisualShaderNodeVectorCompose_phwfv"]
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_hpmrj"]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_t1avg"]
+default_input_values = [0, Vector2(0, 0), 1, Vector2(0, 0)]
+expanded_output_ports = [0]
+op_type = 0
+operator = 1
+
+[sub_resource type="VisualShaderNodeFloatConstant" id="VisualShaderNodeFloatConstant_v58yn"]
+constant = 0.5
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_wddgl"]
+default_input_values = [0, Vector2(0, 0), 1, Vector2(0, 0)]
+op_type = 0
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_2u0n3"]
+input_name = "time"
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_tgipr"]
+texture = ExtResource("1_dwskq")
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+uniform sampler2D tex_frg_9;
+
+
+
+void fragment() {
+// Input:4
+	vec2 n_out4p0 = UV;
+
+
+// FloatConstant:6
+	float n_out6p0 = 0.500000;
+
+
+// VectorOp:5
+	vec2 n_out5p0 = n_out4p0 - vec2(n_out6p0);
+	float n_out5p1 = n_out5p0.r;
+	float n_out5p2 = n_out5p0.g;
+
+
+// VectorCompose:3
+	float n_in3p2 = 0.00000;
+	vec3 n_out3p0 = vec3(n_out5p1, n_out5p2, n_in3p2);
+
+
+// Input:8
+	float n_out8p0 = TIME;
+
+
+	vec3 n_out2p0;
+	mat4 n_out2p1;
+// RotationByAxis:2
+	vec3 n_in2p2 = vec3(0.00000, 0.00000, 1.00000);
+	{
+		float __angle = n_out8p0;
+		vec3 __axis = normalize(n_in2p2);
+		mat3 __rot_matrix = mat3(
+			vec3( cos(__angle)+__axis.x*__axis.x*(1.0 - cos(__angle)), __axis.x*__axis.y*(1.0-cos(__angle))-__axis.z*sin(__angle), __axis.x*__axis.z*(1.0-cos(__angle))+__axis.y*sin(__angle) ),
+			vec3( __axis.y*__axis.x*(1.0-cos(__angle))+__axis.z*sin(__angle), cos(__angle)+__axis.y*__axis.y*(1.0-cos(__angle)), __axis.y*__axis.z*(1.0-cos(__angle))-__axis.x*sin(__angle) ),
+			vec3( __axis.z*__axis.x*(1.0-cos(__angle))-__axis.y*sin(__angle), __axis.z*__axis.y*(1.0-cos(__angle))+__axis.x*sin(__angle), cos(__angle)+__axis.z*__axis.z*(1.0-cos(__angle)) )
+		);
+		n_out2p0 = n_out3p0 * __rot_matrix;
+		n_out2p1 = mat4(__rot_matrix);
+	}
+
+
+// VectorOp:7
+	vec2 n_out7p0 = vec2(n_out2p0.xy) + vec2(n_out6p0);
+
+
+// Texture2D:9
+	vec4 n_out9p0 = texture(tex_frg_9, n_out7p0);
+
+
+// Output:0
+	ALBEDO = vec3(n_out9p0.xyz);
+
+
+}
+"
+graph_offset = Vector2(-370.477, -2.68616)
+nodes/fragment/2/node = SubResource("VisualShaderNodeRotationByAxis_u1w3p")
+nodes/fragment/2/position = Vector2(-360, 40)
+nodes/fragment/3/node = SubResource("VisualShaderNodeVectorCompose_phwfv")
+nodes/fragment/3/position = Vector2(-540, 120)
+nodes/fragment/4/node = SubResource("VisualShaderNodeInput_hpmrj")
+nodes/fragment/4/position = Vector2(-1000, 140)
+nodes/fragment/5/node = SubResource("VisualShaderNodeVectorOp_t1avg")
+nodes/fragment/5/position = Vector2(-700, 120)
+nodes/fragment/6/node = SubResource("VisualShaderNodeFloatConstant_v58yn")
+nodes/fragment/6/position = Vector2(-880, 280)
+nodes/fragment/7/node = SubResource("VisualShaderNodeVectorOp_wddgl")
+nodes/fragment/7/position = Vector2(-100, 200)
+nodes/fragment/8/node = SubResource("VisualShaderNodeInput_2u0n3")
+nodes/fragment/8/position = Vector2(-700, 40)
+nodes/fragment/9/node = SubResource("VisualShaderNodeTexture_tgipr")
+nodes/fragment/9/position = Vector2(140, 100)
+nodes/fragment/connections = PackedInt32Array(3, 0, 2, 0, 4, 0, 5, 0, 6, 0, 5, 1, 5, 1, 3, 0, 5, 2, 3, 1, 2, 0, 7, 0, 6, 0, 7, 1, 8, 0, 2, 1, 7, 0, 9, 0, 9, 0, 0, 0)

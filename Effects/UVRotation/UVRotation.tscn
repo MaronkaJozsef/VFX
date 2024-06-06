@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3 uid="uid://dwlpb5uk10pb6"]
+
+[ext_resource type="Shader" path="res://Effects/UVRotation/UVRotation.gdshader" id="1_5cqt5"]
+[ext_resource type="Texture2D" uid="uid://dcgvpx64iw7c" path="res://Effects/UVManipulation/UVGridHelper.png" id="1_chh3c"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r0u0f"]
+render_priority = 0
+shader = ExtResource("1_5cqt5")
+shader_parameter/colorTexture = ExtResource("1_chh3c")
+
+[sub_resource type="QuadMesh" id="QuadMesh_k02xh"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_r0u0f")
+mesh = SubResource("QuadMesh_k02xh")
