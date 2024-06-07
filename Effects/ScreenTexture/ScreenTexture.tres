@@ -1,0 +1,24 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://b2tshuvynchrw"]
+
+[sub_resource type="Shader" id="Shader_4jhae"]
+code = "shader_type spatial;
+
+render_mode unshaded;
+
+uniform sampler2D sceenTexture: hint_screen_texture, filter_nearest, repeat_enable;
+uniform float refractionIndex: hint_range(0.0, 10.0, 0.001);
+
+void fragment() {
+	vec3 refraction = refract(VERTEX, NORMAL, refractionIndex);
+	
+	vec4 projection = (PROJECTION_MATRIX * vec4(refraction, 1.0f));
+	vec3 normalized = projection.xyz / projection.z;
+	vec2 uv = normalized.xy * 0.5f + 0.5f;
+	
+	ALBEDO = textureLod(sceenTexture, uv, 0.0).rgb;
+}"
+
+[resource]
+render_priority = 0
+shader = SubResource("Shader_4jhae")
+shader_parameter/refractionIndex = 1.01
