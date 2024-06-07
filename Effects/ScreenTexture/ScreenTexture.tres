@@ -9,7 +9,7 @@ uniform sampler2D sceenTexture: hint_screen_texture, filter_nearest, repeat_enab
 uniform float refractionIndex: hint_range(0.0, 10.0, 0.001);
 
 void fragment() {
-	vec3 refraction = refract(VERTEX, NORMAL, refractionIndex);
+	vec3 refraction = refract(-VIEW, NORMAL, refractionIndex);
 	
 	vec4 projection = (PROJECTION_MATRIX * vec4(refraction, 1.0f));
 	vec3 normalized = projection.xyz / projection.z;
@@ -21,4 +21,4 @@ void fragment() {
 [resource]
 render_priority = 0
 shader = SubResource("Shader_4jhae")
-shader_parameter/refractionIndex = 1.01
+shader_parameter/refractionIndex = 1.05

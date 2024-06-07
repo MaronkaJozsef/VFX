@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://cddcsrb1qqwoe"]
+[gd_scene load_steps=8 format=3 uid="uid://cddcsrb1qqwoe"]
 
 [ext_resource type="Texture2D" uid="uid://c1nl0en3jema4" path="res://Effects/CoordinateSpaces/Textures/rock_01_diff_1k.jpg" id="1_npyuo"]
 [ext_resource type="Texture2D" uid="uid://bc6inh10dxs4i" path="res://Effects/CoordinateSpaces/Textures/catNormalMap.png" id="2_avobf"]
 [ext_resource type="PackedScene" uid="uid://n2h6i763ps46" path="res://Prefabs/Rotator.tscn" id="3_tcp2q"]
 [ext_resource type="ArrayMesh" uid="uid://dp7vcxr2ke3t2" path="res://Effects/CoordinateSpaces/CatMesh.tres" id="4_31cj6"]
+[ext_resource type="Material" uid="uid://b2tshuvynchrw" path="res://Effects/ScreenTexture/ScreenTexture.tres" id="4_j8mpo"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ypo41"]
 albedo_texture = ExtResource("1_npyuo")
@@ -11,29 +12,6 @@ normal_enabled = true
 normal_texture = ExtResource("2_avobf")
 
 [sub_resource type="BoxMesh" id="BoxMesh_cayig"]
-
-[sub_resource type="Shader" id="Shader_4jhae"]
-code = "shader_type spatial;
-
-render_mode unshaded;
-
-uniform sampler2D sceenTexture: hint_screen_texture, filter_nearest, repeat_enable;
-uniform float refractionIndex: hint_range(0.0, 10.0, 0.001);
-
-void fragment() {
-	vec3 refraction = refract(VERTEX, NORMAL, refractionIndex);
-	
-	vec4 projection = (PROJECTION_MATRIX * vec4(refraction, 1.0f));
-	vec3 normalized = projection.xyz / projection.z;
-	vec2 uv = normalized.xy * 0.5f + 0.5f;
-	
-	ALBEDO = textureLod(sceenTexture, uv, 0.0).rgb;
-}"
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_wocl4"]
-render_priority = 0
-shader = SubResource("Shader_4jhae")
-shader_parameter/refractionIndex = 1.01
 
 [node name="Node3D" type="Node3D"]
 
@@ -47,10 +25,11 @@ material_override = SubResource("StandardMaterial3D_ypo41")
 mesh = SubResource("BoxMesh_cayig")
 
 [node name="Rotator" parent="." instance=ExtResource("3_tcp2q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.257113, 0.31132)
 
 [node name="Cat" type="MeshInstance3D" parent="Rotator"]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -0.129255, 0)
-material_override = SubResource("ShaderMaterial_wocl4")
+transform = Transform3D(-2, 0, -3.01992e-07, 0, 2, 0, 3.01992e-07, 0, -2, 0, 0, 0)
+material_override = ExtResource("4_j8mpo")
 mesh = ExtResource("4_31cj6")
 skeleton = NodePath("../..")
 
