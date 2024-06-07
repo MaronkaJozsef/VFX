@@ -1,0 +1,106 @@
+[gd_scene load_steps=15 format=3 uid="uid://c7anowmpd7eoj"]
+
+[ext_resource type="Texture2D" uid="uid://c1nl0en3jema4" path="res://Effects/CoordinateSpaces/Textures/rock_01_diff_1k.jpg" id="1_w4eu1"]
+[ext_resource type="Texture2D" uid="uid://bc6inh10dxs4i" path="res://Effects/CoordinateSpaces/Textures/catNormalMap.png" id="2_m4ne1"]
+[ext_resource type="ArrayMesh" uid="uid://dp7vcxr2ke3t2" path="res://Effects/CoordinateSpaces/CatMesh.tres" id="3_qp1wa"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0t528"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_m6tjl"]
+sky_material = SubResource("ProceduralSkyMaterial_0t528")
+
+[sub_resource type="Environment" id="Environment_1ggrn"]
+background_mode = 2
+sky = SubResource("Sky_m6tjl")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3ngqd"]
+albedo_texture = ExtResource("1_w4eu1")
+normal_enabled = true
+normal_texture = ExtResource("2_m4ne1")
+
+[sub_resource type="Shader" id="Shader_1ae5d"]
+code = "shader_type canvas_item;
+
+uniform sampler2D screenTexture: hint_screen_texture, repeat_disable, filter_nearest;
+
+void fragment() {
+	COLOR = textureLod(screenTexture, SCREEN_UV, 0.0f) * vec4(1.0f, 0.0f, 0.0f, 1.0f);
+}
+
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4xlki"]
+shader = SubResource("Shader_1ae5d")
+
+[sub_resource type="Shader" id="Shader_2tsrs"]
+code = "shader_type canvas_item;
+
+uniform sampler2D screenTexture: hint_screen_texture, repeat_disable, filter_nearest;
+uniform sampler2D noiseTexture: repeat_enable;
+uniform float warpStrenght: hint_range(0.0, 1.0, 0.01);
+
+void fragment() {
+	float uOffset = texture(noiseTexture, UV + TIME * vec2(0.3f, 0.02f)).r * warpStrenght - 0.5 * warpStrenght;
+	float vOffset = texture(noiseTexture, UV + TIME * vec2(0.03f, 0.4f)).g * warpStrenght - 0.5 * warpStrenght;
+	
+	COLOR = texture(screenTexture, SCREEN_UV + vec2(uOffset, vOffset));
+	//COLOR = texture(noiseTexture, UV + TIME * vec2(0.3f, 0.02f));
+}"
+
+[sub_resource type="Gradient" id="Gradient_kuwyg"]
+offsets = PackedFloat32Array(0, 0.131148, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.336201, 0.605215, 0.437469, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_pi5gn"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6b85r"]
+seamless = true
+color_ramp = SubResource("Gradient_kuwyg")
+noise = SubResource("FastNoiseLite_pi5gn")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d5dh3"]
+shader = SubResource("Shader_2tsrs")
+shader_parameter/warpStrenght = 0.16
+shader_parameter/noiseTexture = SubResource("NoiseTexture2D_6b85r")
+
+[node name="Node3D" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.343345, 0.81338, -0.469603, -1.49013e-08, 0.499998, 0.866027, 0.93921, -0.297346, 0.171672, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1ggrn")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.141205, 0.313667)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_3ngqd")
+mesh = ExtResource("3_qp1wa")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_4xlki")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer2"]
+material = SubResource("ShaderMaterial_d5dh3")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
