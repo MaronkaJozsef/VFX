@@ -1,0 +1,40 @@
+[gd_scene load_steps=9 format=3 uid="uid://c8r1weu1m7irb"]
+
+[ext_resource type="Texture2D" uid="uid://c7v5k1rw814b7" path="res://Effects/EnvironmentMap/symmetrical_garden_02_1k.hdr" id="1_8b2q5"]
+[ext_resource type="Texture2D" uid="uid://6gym2c8eoc7v" path="res://Effects/Rain/rain_drip_mask.tga" id="2_3v2pf"]
+[ext_resource type="Texture2D" uid="uid://cvsgyb6lbuf3u" path="res://Effects/Rain/rain_drips.tga" id="2_6yydx"]
+[ext_resource type="Shader" path="res://Effects/Rain/RainDrips.gdshader" id="2_kbig5"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_adota"]
+panorama = ExtResource("1_8b2q5")
+
+[sub_resource type="Sky" id="Sky_tvck6"]
+sky_material = SubResource("PanoramaSkyMaterial_adota")
+
+[sub_resource type="Environment" id="Environment_s07pt"]
+background_mode = 2
+sky = SubResource("Sky_tvck6")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0ckol"]
+shader = ExtResource("2_kbig5")
+shader_parameter/rainDripsTexture = ExtResource("2_6yydx")
+shader_parameter/dripMaskTexture = ExtResource("2_3v2pf")
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_s07pt")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_0ckol")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

@@ -20,5 +20,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 	- [Moss texture](https://polyhaven.com/a/aerial_grass_rock)
 	- [Rock texture](https://polyhaven.com/a/rock_01)
 	- [Symmetrical Garden 02 texture](https://polyhaven.com/a/symmetrical_garden_02)
+	- [rain_drips](https://youtu.be/jfXJYPTdyAg?si=iHpiqiALESDoLDHP)
+	- [rain_drip_mask](https://youtu.be/jfXJYPTdyAg?si=iHpiqiALESDoLDHP)
 ---
 Feel free to reach out with any questions or feedback. Enjoy creating amazing visual effects with Godot!
