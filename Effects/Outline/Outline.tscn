@@ -1,0 +1,138 @@
+[gd_scene load_steps=15 format=3 uid="uid://cxfn32w4mo0ek"]
+
+[ext_resource type="PackedScene" uid="uid://n2h6i763ps46" path="res://Prefabs/Rotator.tscn" id="1_qe5ho"]
+[ext_resource type="ArrayMesh" uid="uid://dp7vcxr2ke3t2" path="res://Effects/CoordinateSpaces/CatMesh.tres" id="3_sbp0q"]
+[ext_resource type="Shader" path="res://Effects/Toon/Toon.gdshader" id="5_oma8c"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_bofsi"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_5umkq"]
+sky_material = SubResource("ProceduralSkyMaterial_bofsi")
+
+[sub_resource type="Environment" id="Environment_1f4qv"]
+background_mode = 2
+sky = SubResource("Sky_5umkq")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="Shader" id="Shader_hamtq"]
+code = "shader_type spatial;
+
+render_mode cull_disabled, unshaded;
+
+uniform sampler2D screenTexture: hint_screen_texture, filter_nearest;
+uniform sampler2D worldNormal: hint_normal_roughness_texture, filter_nearest;
+uniform sampler2D depthTexture: hint_depth_texture, filter_nearest;
+
+const vec2[4] samplePositions = {vec2(-1, 1), vec2(1, -1), vec2(1, 1), vec2(-1, -1)};
+
+float linearDepth(vec2 uv, mat4 inv_projection_matrix) {
+	float depth = texture(depthTexture, uv).x;
+	vec3 ndc = vec3(uv * 2.0 - 1.0, depth);
+	vec4 view = inv_projection_matrix * vec4(ndc, 1.0);
+	float linear_depth = -view.z / view.w;
+	
+	return -view.z / view.w;
+}
+
+void vertex() {
+	POSITION = vec4(VERTEX, 1.0f);
+}
+
+void fragment() {
+	const vec2 pixelSize = 1.0f / VIEWPORT_SIZE;
+	
+	float[4] depthSamples;
+	for (int i = 0; i < 4; i++) {
+		vec2 uv = SCREEN_UV + samplePositions[i] * pixelSize;
+		depthSamples[i] = linearDepth(uv, INV_PROJECTION_MATRIX);
+	}
+	
+	float diff1 = abs(depthSamples[0] - depthSamples[1]);
+	float diff2 = abs(depthSamples[2] - depthSamples[3]);
+	
+	float edge = smoothstep(0.7f, 0.8f, diff1 + diff2);
+	vec3 edgeColor = vec3(0.0f);
+	
+	vec4 screenColor = texture(screenTexture, SCREEN_UV);
+	
+	ALBEDO = mix(screenColor.rgb, edgeColor, edge);
+}
+
+//void light() {
+	// Called for every pixel for every light affecting the material.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5g7rb"]
+render_priority = 0
+shader = SubResource("Shader_hamtq")
+
+[sub_resource type="QuadMesh" id="QuadMesh_blusg"]
+size = Vector2(2, 2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a0rx8"]
+render_priority = 0
+shader = ExtResource("5_oma8c")
+
+[sub_resource type="BoxMesh" id="BoxMesh_heqdr"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_filoe"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_x3bm4"]
+render_priority = 0
+shader = ExtResource("5_oma8c")
+
+[sub_resource type="TorusMesh" id="TorusMesh_fyvje"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1f4qv")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.238427, -0.721987, 0.649529, -0.0604689, 0.656483, 0.751913, -0.969276, -0.218553, 0.112866, 5.89931, 0, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.95313)
+
+[node name="EdgePostProcess" type="MeshInstance3D" parent="Camera3D"]
+material_override = SubResource("ShaderMaterial_5g7rb")
+cast_shadow = 0
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_blusg")
+
+[node name="Rotator" parent="." instance=ExtResource("1_qe5ho")]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Rotator"]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_a0rx8")
+mesh = ExtResource("3_sbp0q")
+skeleton = NodePath("../..")
+
+[node name="Rotator2" parent="." instance=ExtResource("1_qe5ho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.64288, 0, -2.02958)
+axis = Vector3(1, 0, 0)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Rotator2"]
+transform = Transform3D(0.945189, 0, -0.326525, -0.169602, 0.854522, -0.490945, 0.279023, 0.519415, 0.807685, 0, 0, 0)
+mesh = SubResource("BoxMesh_heqdr")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.854975, -0.156803)
+mesh = SubResource("SphereMesh_filoe")
+
+[node name="Rotator4" parent="." instance=ExtResource("1_qe5ho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.46368, 1.60008, -3.95609)
+axis = Vector3(1, 1, 1)
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Rotator4"]
+transform = Transform3D(0.965926, 0.224144, -0.12941, -0.258819, 0.836516, -0.482963, 0, 0.5, 0.866025, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_x3bm4")
+mesh = SubResource("TorusMesh_fyvje")
+skeleton = NodePath("../..")
