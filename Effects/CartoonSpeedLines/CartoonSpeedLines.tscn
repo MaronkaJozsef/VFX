@@ -1,0 +1,54 @@
+[gd_scene load_steps=10 format=3 uid="uid://cfcx73q31slts"]
+
+[ext_resource type="ArrayMesh" uid="uid://dp7vcxr2ke3t2" path="res://Effects/CoordinateSpaces/CatMesh.tres" id="1_58tq5"]
+[ext_resource type="Shader" path="res://Effects/CartoonSpeedLines/CartoonSpeedLines.gdshader" id="2_77od7"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_63xuv"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_jfixr"]
+sky_material = SubResource("ProceduralSkyMaterial_63xuv")
+
+[sub_resource type="Environment" id="Environment_coloq"]
+background_mode = 2
+sky = SubResource("Sky_jfixr")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ga31b"]
+frequency = 0.0206
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cslo7"]
+width = 256
+height = 256
+noise = SubResource("FastNoiseLite_ga31b")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5f7r1"]
+render_priority = 0
+shader = ExtResource("2_77od7")
+shader_parameter/lengthScale = 5.0
+shader_parameter/noiseTexture = SubResource("NoiseTexture2D_cslo7")
+
+[sub_resource type="QuadMesh" id="QuadMesh_l7w24"]
+size = Vector2(2, 2)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_coloq")
+
+[node name="Cat" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.51537)
+mesh = ExtResource("1_58tq5")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.141185, -0.115853)
+
+[node name="SpeedLines" type="MeshInstance3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.141185, 0.115853)
+material_override = SubResource("ShaderMaterial_5f7r1")
+cast_shadow = 0
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_l7w24")
+skeleton = NodePath("../..")
