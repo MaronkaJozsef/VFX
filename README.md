@@ -4,6 +4,25 @@
 
 This project showcases a variety of visual effects created using both visual shaders and regular shaders in Godot Engine. The goal is to demonstrate different techniques and approaches to creating simple visual effects that can be used in various game development scenarios.
 
+## Preview
+
+![Outline](readmeAssets/Outline.gif)
+
+![Environment Map](readmeAssets/EnvironmentMap.gif)
+
+![Noise](readmeAssets/Noise.gif)
+
+![Speed Lines](readmeAssets/SpeedLines.gif)
+
+![Swirl](readmeAssets/Swirl.gif)
+
+![Toon](readmeAssets/Toon.gif)
+
+![Matcap](readmeAssets/Matcap.gif)
+
+![World Texture Coordinates](readmeAssets/WorldTextCoord.gif)
+
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
